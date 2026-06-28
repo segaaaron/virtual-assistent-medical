@@ -1,0 +1,67 @@
+# Compose de PRODUCCIÓN para Dokploy.
+# Dokploy inyecta los secretos (${...}) desde el panel "Environment".
+# Los servicios server+worker comparten imagen (Dockerfile) y env; cambian el comando.
+
+x-brain-env: &brain-env
+  NODE_ENV: production
+  PORT: "3000"
+  DATABASE_URL: postgres://loreley:${POSTGRES_PASSWORD}@postgres:5432/loreley
+  REDIS_URL: redis://redis:6379
+  WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID}
+  WHATSAPP_TOKEN: ${WHATSAPP_TOKEN}
+  WHATSAPP_APP_SECRET: ${WHATSAPP_APP_SECRET}
+  WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN}
+  WHATSAPP_GRAPH_VERSION: ${WHATSAPP_GRAPH_VERSION:-v21.0}
+  OPENAI_API_KEY: ${OPENAI_API_KEY}
+  DOCTORA_PHONE: ${DOCTORA_PHONE}
+  DOCTORA_NAME: ${DOCTORA_NAME}
+  DEBOUNCE_MS: ${DEBOUNCE_MS:-9000}
+  DEDUP_TTL_SECONDS: ${DEDUP_TTL_SECONDS:-86400}
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: loreley
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: loreley
+    volumes:
+      - loreley_pgdata:/var/lib/postgresql/data
+    networks: [internal]
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    networks: [internal]
+
+  server:
+    build: .
+    restart: unless-stopped
+    command: npm run start:server
+    environment: *brain-env
+    depends_on: [postgres, redis]
+    networks: [internal, dokploy-network]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.loreley-secure.rule=Host(`n8n.yasminmedrano.com`)
+      - traefik.http.routers.loreley-secure.entrypoints=websecure
+      - traefik.http.routers.loreley-secure.tls.certresolver=letsencrypt
+      - traefik.http.services.loreley.loadbalancer.server.port=3000
+
+  worker:
+    build: .
+    restart: unless-stopped
+    command: npm run start:worker
+    environment: *brain-env
+    depends_on: [postgres, redis]
+    networks: [internal]
+
+networks:
+  internal:
+  dokploy-network:
+    external: true
+
+volumes:
+  loreley_pgdata:
