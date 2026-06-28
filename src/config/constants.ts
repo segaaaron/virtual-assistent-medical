@@ -16,9 +16,6 @@ export const CITA_REMINDER_TEMPLATE = "recordatorio_cita"; // TODO aprobar en Me
 // Nota: el numero personal de la doctora (allow-list/escalacion) vive en env.DOCTORA_PHONE
 // y su nombre en env.DOCTORA_NAME — datos privados, NUNCA hardcodeados aqui.
 
-// Chatwoot: inbox del canal WhatsApp ("Loreley WhatsApp"). Todo el espejo entra aqui.
-export const CHATWOOT_WHATSAPP_INBOX_ID = 1;
-
 // --- Agenda (horario real del consultorio, Bolivia UTC-4 sin horario de verano) ---
 export const CLINIC_TZ_OFFSET = -4; // horas
 export const WORKING_DAYS = [1, 2, 3, 4, 5]; // 0=domingo ... 6=sabado (lun-vie)

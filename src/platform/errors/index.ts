@@ -9,7 +9,7 @@ export class AppError extends Error {
 // Esperado, se mapea a una respuesta amable al usuario.
 export class DomainError extends AppError {}
 
-// Falla de integracion externa (WA/OpenAI/Chatwoot) -> el worker reintenta/backoff.
+// Falla de integracion externa (WA/OpenAI) -> el worker reintenta/backoff.
 export class IntegrationError extends AppError {}
 
 // Config rota al boot -> fatal.

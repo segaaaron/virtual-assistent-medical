@@ -5,7 +5,6 @@ export interface InboundMessage {
   waId: WaId;
   from: Phone;
   text: string;
-  conversationId?: number; // id de conversacion Chatwoot
   mediaType?: "audio" | "image";
   mediaId?: string;
   // respuesta a un boton interactivo (p.ej. la Dra respondiendo un aviso de visita)

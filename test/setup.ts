@@ -5,8 +5,6 @@ const defaults: Record<string, string> = {
   WHATSAPP_APP_SECRET: "s",
   WHATSAPP_VERIFY_TOKEN: "v",
   OPENAI_API_KEY: "k",
-  CHATWOOT_BASE_URL: "https://x.test/api/v1/accounts/1",
-  CHATWOOT_API_TOKEN: "c",
   DATABASE_URL: "postgres://u:p@localhost:5432/db",
   REDIS_URL: "redis://localhost:6379",
   DOCTORA_PHONE: "59100000000",

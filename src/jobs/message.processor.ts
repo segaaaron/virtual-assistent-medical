@@ -74,24 +74,10 @@ export async function processMessage(job: InboundJob, deps: Container): Promise<
     return;
   }
 
-  // 2.5) ESPEJO Chatwoot (NO para la doctora): asegura la conversacion del paciente/visitador/familiar
-  // y postea su mensaje ENTRANTE para que la Dra lo vea en su inbox. Best-effort: si Chatwoot falla,
-  // seguimos atendiendo al paciente (el espejo no es critico, el envio WhatsApp si).
-  if (role !== "doctora") {
-    try {
-      const convId = await deps.crm.ensureConversation(message.from);
-      await deps.crm.postIncoming(convId, message.text);
-      message = { ...message, conversationId: convId };
-    } catch (err) {
-      log.error({ err, role }, "espejo Chatwoot (entrada) fallo; continua la atencion al paciente");
-    }
-  }
-
   // 3) despacho aislado: cada rol = prompt+memoria+tools propios (boundaries impiden cruce)
   const agentDeps = {
     messaging: deps.messaging,
     llm: deps.llm,
-    crm: deps.crm,
     memory: deps.memory,
     agenda: deps.agenda,
     solicitud: deps.solicitud,

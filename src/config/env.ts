@@ -13,9 +13,6 @@ const EnvSchema = z.object({
 
   OPENAI_API_KEY: z.string().min(1),
 
-  CHATWOOT_BASE_URL: z.string().url(),
-  CHATWOOT_API_TOKEN: z.string().min(1),
-
   // Datos privados de la doctora (NUNCA hardcodeados ni commiteados; solo en .env).
   DOCTORA_PHONE: z.string().min(1), // numero personal de la Dra (allow-list + escalacion)
   DOCTORA_NAME: z.string().min(1), // nombre completo, ej. "Nombre Apellido"

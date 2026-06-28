@@ -3,7 +3,6 @@ import { env } from "@config/env.js";
 import { logger } from "@platform/logger/index.js";
 import type { MessagingPort } from "@core/ports/messaging.port.js";
 import type { LlmPort } from "@core/ports/llm.port.js";
-import type { CrmPort } from "@core/ports/crm.port.js";
 import type { RoleStore } from "@core/ports/role-store.port.js";
 import type { MemoryPort } from "@core/ports/memory.port.js";
 import type { AgendaPort } from "@core/ports/agenda.port.js";
@@ -15,9 +14,6 @@ import type { ControlPort } from "@core/ports/control.port.js";
 
 import { createWhatsappAdapter } from "@integrations/whatsapp/whatsapp.adapter.js";
 import { createOpenAiAdapter } from "@integrations/openai/openai.adapter.js";
-import { createChatwootAdapter } from "@integrations/chatwoot/chatwoot.adapter.js";
-import { withChatwootMirror } from "@integrations/chatwoot/messaging-mirror.js";
-import { createCwMapRepo } from "@integrations/db/cw-map.repo.js";
 import { createMediaAdapter } from "@integrations/media/media.adapter.js";
 import { createRoleStore } from "@integrations/db/role.repo.js";
 import { createMemoryRepo } from "@integrations/db/memory.repo.js";
@@ -30,7 +26,6 @@ import { createControlRepo } from "@integrations/db/control.repo.js";
 export interface Container {
   messaging: MessagingPort;
   llm: LlmPort;
-  crm: CrmPort;
   roleStore: RoleStore;
   memory: MemoryPort;
   agenda: AgendaPort;
@@ -44,14 +39,10 @@ export interface Container {
 
 export function buildContainer(): Container {
   const activity = createActivityRepo();
-  const cwMap = createCwMapRepo();
-  const crm = createChatwootAdapter(env, cwMap);
-  // Espejo de SALIDA: todo envio WhatsApp a un contacto con conversacion mapeada se replica en Chatwoot.
-  const messaging = withChatwootMirror(createWhatsappAdapter(env, activity), crm, cwMap, logger);
+  const messaging = createWhatsappAdapter(env, activity);
   return {
     messaging,
     llm: createOpenAiAdapter(env),
-    crm,
     media: createMediaAdapter(env),
     roleStore: createRoleStore(),
     memory: createMemoryRepo(),

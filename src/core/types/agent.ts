@@ -1,6 +1,5 @@
 import type { MessagingPort } from "@core/ports/messaging.port.js";
 import type { LlmPort } from "@core/ports/llm.port.js";
-import type { CrmPort } from "@core/ports/crm.port.js";
 import type { MemoryPort } from "@core/ports/memory.port.js";
 import type { AgendaPort } from "@core/ports/agenda.port.js";
 import type { SolicitudPort } from "@core/ports/solicitud.port.js";
@@ -13,7 +12,6 @@ import type { Logger } from "@shared/logger.js";
 export interface AgentDeps {
   messaging: MessagingPort;
   llm: LlmPort;
-  crm: CrmPort;
   memory: MemoryPort;
   agenda: AgendaPort;
   solicitud: SolicitudPort;

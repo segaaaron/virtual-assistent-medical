@@ -99,7 +99,6 @@ export function makeFakes(opts: FakeOpts = {}) {
   const deps = {
     messaging,
     llm,
-    crm: {},
     memory,
     agenda,
     solicitud,
