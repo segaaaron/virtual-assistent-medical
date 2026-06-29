@@ -10,3 +10,5 @@ db-backups/
 *.bak.*
 .env.*
 !.env.example
+infra-access.md
+dokploy-env.txt

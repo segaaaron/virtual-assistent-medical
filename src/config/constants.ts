@@ -6,8 +6,7 @@ export const JOB_BACKOFF_MS = 2000;
 
 export const WORKER_SOFT_TIMEOUT_MS = 25_000;
 
-// Modelo LLM (centralizado, no hardcodeado en el adaptador).
-export const OPENAI_MODEL = "gpt-4o-mini"; // TODO: alinear con el modelo vigente del proyecto
+// Modelo LLM: ahora vive en env.OPENAI_MODEL (configurable en Dokploy sin recompilar).
 
 // Plantillas Meta (deben aprobarse en WhatsApp Manager). Usadas fuera de la ventana 24h.
 export const DRA_AVISO_TEMPLATE = "aviso_visita"; // TODO aprobar en Meta

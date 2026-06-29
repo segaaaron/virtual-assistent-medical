@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 import type { Env } from "@config/env.js";
-import { OPENAI_MODEL } from "@config/constants.js";
 import type { LlmPort, LlmMessage, LlmToolDef, LlmCompletion } from "@core/ports/llm.port.js";
 import type { ChatCompletionMessageParam } from "openai/resources/index";
 
@@ -29,7 +28,7 @@ export function createOpenAiAdapter(env: Env): LlmPort {
       });
 
       const res = await client.chat.completions.create({
-        model: OPENAI_MODEL,
+        model: env.OPENAI_MODEL,
         messages: mapped,
         tools: tools.length
           ? tools.map((t) => ({

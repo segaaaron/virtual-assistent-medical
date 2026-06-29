@@ -7,6 +7,7 @@ import { withContext } from "@platform/logger/index.js";
 import { maskPhone } from "@shared/pii.js";
 import { env } from "@config/env.js";
 import { resolveRole } from "@core/routing/resolveRole.js";
+import { isGated } from "@core/routing/gating.js";
 import { classifyUnknown } from "@core/classify/classify.js";
 
 import { createPacienteAgent } from "@roles/paciente/index.js";
@@ -23,6 +24,14 @@ export async function processMessage(job: InboundJob, deps: Container): Promise<
 
   // registra actividad (ventana 24h) por cada inbound
   await deps.activity.recordInbound(message.from, message.timestamp);
+
+  // 0) GATING (#QA-1): bot no validado en vivo -> solo doctora + numeros de prueba.
+  // Cualquier otro contacto: silencio total (sin clasificar ni gastar LLM). Auditado.
+  if (isGated(message.from, { enabled: env.BOT_GATING, doctoraPhone: env.DOCTORA_PHONE, testPhones: env.TEST_PHONES })) {
+    await deps.audit.log("gated_silence", { phone: maskPhone(message.from) });
+    log.debug({}, "gating activo: contacto no permitido, bot en silencio");
+    return;
+  }
 
   // 1) media -> texto. Si falla, NO quedar en silencio (mensaje posiblemente urgente).
   if (message.mediaType && message.mediaId) {

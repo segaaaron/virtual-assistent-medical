@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 import type { Env } from "@config/env.js";
-import { OPENAI_MODEL } from "@config/constants.js";
 import type { MediaPort } from "@core/ports/media.port.js";
 import { IntegrationError } from "@platform/errors/index.js";
 
@@ -39,7 +38,7 @@ export function createMediaAdapter(env: Env): MediaPort {
       const { buf, mime } = await download(mediaId);
       const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
       const r = await client.chat.completions.create({
-        model: OPENAI_MODEL,
+        model: env.OPENAI_MODEL,
         messages: [
           {
             role: "user",

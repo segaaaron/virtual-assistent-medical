@@ -22,6 +22,21 @@ const EnvSchema = z.object({
 
   DEBOUNCE_MS: z.coerce.number().default(9000),
   DEDUP_TTL_SECONDS: z.coerce.number().default(86400),
+
+  // Modelo LLM (centralizado en env, no hardcodeado). Cambiable en Dokploy sin recompilar.
+  OPENAI_MODEL: z.string().default("gpt-4o-mini"),
+
+  // Gating (#QA-1): mientras el bot no este validado en vivo, solo responde a la doctora
+  // y a los numeros de prueba. ON por defecto (seguro). Apagar con BOT_GATING=false al validar.
+  BOT_GATING: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((v) => v === "true"),
+  // Lista separada por comas de numeros de prueba permitidos durante el gating (E.164 sin '+').
+  TEST_PHONES: z
+    .string()
+    .default("59176944986")
+    .transform((s) => s.split(",").map((x) => x.trim()).filter(Boolean)),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
